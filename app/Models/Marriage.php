@@ -42,4 +42,35 @@ class Marriage extends Model
     {
         return $this->belongsTo(Member::class, 'wife_id');
     }
+
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+        $camelArray = [];
+
+        foreach ($array as $key => $value) {
+            $camelKey = is_string($key) ? lcfirst(str_replace('_', '', ucwords($key, '_'))) : $key;
+            if (is_array($value)) {
+                $camelArray[$camelKey] = $this->convertKeysToCamel($value);
+            } else {
+                $camelArray[$camelKey] = $value;
+            }
+        }
+
+        return $camelArray;
+    }
+
+    private function convertKeysToCamel(array $array): array
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            $camelKey = is_string($key) ? lcfirst(str_replace('_', '', ucwords($key, '_'))) : $key;
+            if (is_array($value)) {
+                $result[$camelKey] = $this->convertKeysToCamel($value);
+            } else {
+                $result[$camelKey] = $value;
+            }
+        }
+        return $result;
+    }
 }

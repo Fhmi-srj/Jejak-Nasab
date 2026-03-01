@@ -90,4 +90,44 @@ class Member extends Model
     {
         return $this->hasOne(Bani::class, 'root_member_id');
     }
+
+    /**
+     * Convert snake_case keys to camelCase for JSON serialization.
+     * The frontend expects camelCase (from the original Prisma/Next.js API).
+     */
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+        $camelArray = [];
+
+        foreach ($array as $key => $value) {
+            $camelKey = lcfirst(str_replace('_', '', ucwords($key, '_')));
+            // Recursively convert nested arrays/relations
+            if (is_array($value)) {
+                $camelArray[$camelKey] = $this->convertKeysToCamel($value);
+            } else {
+                $camelArray[$camelKey] = $value;
+            }
+        }
+
+        return $camelArray;
+    }
+
+    private function convertKeysToCamel(array $array): array
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            if (is_string($key)) {
+                $camelKey = lcfirst(str_replace('_', '', ucwords($key, '_')));
+            } else {
+                $camelKey = $key;
+            }
+            if (is_array($value)) {
+                $result[$camelKey] = $this->convertKeysToCamel($value);
+            } else {
+                $result[$camelKey] = $value;
+            }
+        }
+        return $result;
+    }
 }
