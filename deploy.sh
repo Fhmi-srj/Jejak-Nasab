@@ -33,12 +33,10 @@ echo "🗄️  Running database migrations..."
 MIGRATION_COUNT=$(php artisan tinker --execute="echo DB::table('migrations')->count();" 2>/dev/null || echo "0")
 
 if [ "$MIGRATION_COUNT" = "0" ]; then
-    echo "   ↳ Registering existing migrations..."
+    echo "   ↳ Registering existing migrations (from production DB)..."
     php artisan tinker --execute="
     DB::table('migrations')->insert([
         ['migration' => '0001_01_01_000000_create_users_table', 'batch' => 1],
-        ['migration' => '0001_01_01_000001_create_cache_table', 'batch' => 1],
-        ['migration' => '0001_01_01_000002_create_jobs_table', 'batch' => 1],
         ['migration' => '0001_01_01_000003_create_banis_table', 'batch' => 1],
         ['migration' => '0001_01_01_000004_create_members_table', 'batch' => 1],
         ['migration' => '0001_01_01_000005_create_marriages_table', 'batch' => 1],
