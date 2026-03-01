@@ -1,1 +1,0 @@
-import{u as e,j as o}from"./app-DnAnvp79.js";import t from"./PublicTreeView-BckDVdKb.js";import"./zoom-out-By4R6Xj3.js";import"./createLucideIcon-53c198kl.js";function m(){const{bani:r}=e().props;return o.jsx(t,{bani:r})}export{m as default};
