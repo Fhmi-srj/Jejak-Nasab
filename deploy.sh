@@ -53,9 +53,9 @@ php artisan migrate --force
 echo ""
 echo "🧹 Clearing caches..."
 php artisan config:clear
-php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+php artisan cache:clear 2>/dev/null || echo "   ↳ Cache table not found, skipping..."
 
 # 5. Re-cache for production performance
 echo ""
