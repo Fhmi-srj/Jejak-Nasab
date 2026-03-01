@@ -49,20 +49,20 @@ export default function MemberShowPage() {
                             <div className="flex items-start gap-4">
                                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${member.gender === "MALE" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-600"}`}>
                                     {member.photo ? (
-                                        <img src={member.photo} alt={member.full_name} className="w-16 h-16 rounded-2xl object-cover" />
+                                        <img src={member.photo} alt={member.fullName || member.full_name} className="w-16 h-16 rounded-2xl object-cover" />
                                     ) : (
                                         <User className="w-8 h-8" />
                                     )}
                                 </div>
                                 <div className="flex-1">
-                                    <h1 className="text-xl font-bold text-surface-900">{member.full_name}</h1>
+                                    <h1 className="text-xl font-bold text-surface-900">{member.fullName || member.full_name}</h1>
                                     {member.nickname && <p className="text-sm text-surface-500">({member.nickname})</p>}
                                     <div className="flex items-center gap-2 mt-2">
                                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${member.gender === "MALE" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-600"}`}>
                                             {member.gender === "MALE" ? "Laki-laki" : "Perempuan"}
                                         </span>
-                                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${member.is_alive ? "bg-green-50 text-green-600" : "bg-surface-100 text-surface-500"}`}>
-                                            {member.is_alive ? "Hidup" : "Wafat"}
+                                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${(member.isAlive ?? member.is_alive) ? "bg-green-50 text-green-600" : "bg-surface-100 text-surface-500"}`}>
+                                            {(member.isAlive ?? member.is_alive) ? "Hidup" : "Wafat"}
                                         </span>
                                     </div>
                                 </div>
@@ -76,16 +76,16 @@ export default function MemberShowPage() {
 
                         {/* Details */}
                         <div className="p-6 space-y-4">
-                            {member.birth_date && (
+                            {(member.birthDate || member.birth_date) && (
                                 <div className="flex items-center gap-3">
                                     <Calendar className="w-4 h-4 text-surface-400" />
-                                    <span className="text-sm text-surface-700">Lahir: {new Date(member.birth_date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
+                                    <span className="text-sm text-surface-700">Lahir: {new Date(member.birthDate || member.birth_date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
                                 </div>
                             )}
-                            {member.birth_place && (
+                            {(member.birthPlace || member.birth_place) && (
                                 <div className="flex items-center gap-3">
                                     <MapPin className="w-4 h-4 text-surface-400" />
-                                    <span className="text-sm text-surface-700">Tempat lahir: {member.birth_place}</span>
+                                    <span className="text-sm text-surface-700">Tempat lahir: {member.birthPlace || member.birth_place}</span>
                                 </div>
                             )}
                             {member.city && (
@@ -94,24 +94,24 @@ export default function MemberShowPage() {
                                     <span className="text-sm text-surface-700">Kota: {member.city}</span>
                                 </div>
                             )}
-                            {member.phone_whatsapp && (
+                            {(member.phoneWhatsapp || member.phone_whatsapp) && (
                                 <div className="flex items-center gap-3">
                                     <Phone className="w-4 h-4 text-surface-400" />
-                                    <a href={`https://wa.me/${member.phone_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-sm text-green-600 hover:underline">
-                                        {member.phone_whatsapp}
+                                    <a href={`https://wa.me/${(member.phoneWhatsapp || member.phone_whatsapp).replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-sm text-green-600 hover:underline">
+                                        {member.phoneWhatsapp || member.phone_whatsapp}
                                     </a>
                                 </div>
                             )}
                             {member.father && (
                                 <div className="flex items-center gap-3">
                                     <Users className="w-4 h-4 text-surface-400" />
-                                    <span className="text-sm text-surface-700">Ayah: {member.father.full_name}</span>
+                                    <span className="text-sm text-surface-700">Ayah: {member.father.fullName || member.father.full_name}</span>
                                 </div>
                             )}
                             {member.mother && (
                                 <div className="flex items-center gap-3">
                                     <Users className="w-4 h-4 text-surface-400" />
-                                    <span className="text-sm text-surface-700">Ibu: {member.mother.full_name}</span>
+                                    <span className="text-sm text-surface-700">Ibu: {member.mother.fullName || member.mother.full_name}</span>
                                 </div>
                             )}
                             {member.bio && (

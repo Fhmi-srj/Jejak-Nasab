@@ -130,14 +130,14 @@ function MemberAddForm({ baniId }: { baniId: string }) {
                             <label className="block text-sm font-medium text-surface-700 mb-1">Ayah</label>
                             <select value={formData.fatherId} onChange={(e) => setFormData({ ...formData, fatherId: e.target.value })} className="w-full px-3 py-2.5 rounded-xl border border-surface-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                                 <option value="">— Pilih Ayah —</option>
-                                {males.map((m: any) => <option key={m.id} value={m.id}>{m.full_name}</option>)}
+                                {males.map((m: any) => <option key={m.id} value={m.id}>{m.fullName || m.full_name}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-surface-700 mb-1">Ibu</label>
                             <select value={formData.motherId} onChange={(e) => setFormData({ ...formData, motherId: e.target.value })} className="w-full px-3 py-2.5 rounded-xl border border-surface-200 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none">
                                 <option value="">— Pilih Ibu —</option>
-                                {females.map((m: any) => <option key={m.id} value={m.id}>{m.full_name}</option>)}
+                                {females.map((m: any) => <option key={m.id} value={m.id}>{m.fullName || m.full_name}</option>)}
                             </select>
                         </div>
                     </div>

@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 
 export default function CreateBaniPage() {
-    const router = useRouter();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [rootMemberName, setRootMemberName] = useState("");
@@ -41,8 +40,7 @@ export default function CreateBaniPage() {
                 return;
             }
 
-            router.push(`/dashboard/bani/${data.bani.id}`);
-            router.refresh();
+            router.visit(`/dashboard/bani/${data.bani.id}`);
         } catch {
             setError("Terjadi kesalahan. Silakan coba lagi.");
         } finally {
