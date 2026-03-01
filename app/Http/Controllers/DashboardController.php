@@ -56,16 +56,44 @@ class DashboardController extends Controller
     public function logs(Request $request): Response
     {
         $user = $request->user();
+        $isAdmin = in_array($user->role, ['SUPER_ADMIN', 'ADMIN']);
 
-        $baniIds = BaniUser::where('user_id', $user->id)->pluck('bani_id')->toArray();
+        if (!$isAdmin) {
+            return redirect()->route('dashboard');
+        }
 
-        $logs = ActivityLog::whereIn('bani_id', $baniIds)
-            ->with('user:id,name,avatar')
-            ->orderBy('created_at', 'desc')
-            ->paginate(50);
+        $page = max(1, (int) $request->query('page', 1));
+        $actionFilter = $request->query('action', '');
+        $pageSize = 20;
+
+        $query = ActivityLog::query()
+            ->with(['user:id,name,avatar', 'bani:id,name'])
+            ->orderBy('created_at', 'desc');
+
+        if ($actionFilter) {
+            $query->where('action', $actionFilter);
+        }
+
+        $totalCount = $query->count();
+        $totalPages = max(1, ceil($totalCount / $pageSize));
+
+        $logs = $query->skip(($page - 1) * $pageSize)
+            ->take($pageSize)
+            ->get();
+
+        // Count by action type for filter badges
+        $actionCounts = ActivityLog::selectRaw('action, count(*) as cnt')
+            ->groupBy('action')
+            ->pluck('cnt', 'action')
+            ->toArray();
 
         return Inertia::render('Dashboard/Logs/Index', [
             'logs' => $logs,
+            'totalCount' => $totalCount,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'actionFilter' => $actionFilter,
+            'actionCounts' => $actionCounts,
         ]);
     }
 }
