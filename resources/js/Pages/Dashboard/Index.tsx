@@ -44,7 +44,7 @@ interface Props {
 }
 
 export default function DashboardPage() {
-    const { user, banis, totalBanis, totalMembers, recentLogs } = usePage<{ props: Props }>().props as any;
+    const { user, banis, totalBanis, totalMembers, recentLogs } = usePage().props as any;
 
     const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "ADMIN";
 
