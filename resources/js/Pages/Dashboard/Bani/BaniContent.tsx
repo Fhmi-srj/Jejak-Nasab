@@ -2138,6 +2138,31 @@ export default function BaniContent({
 
     return (
         <div className="space-y-4">
+            {/* Bani Info Card */}
+            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-4 sm:p-5 text-white shadow-lg shadow-primary-600/20">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-bold">{baniName}</h2>
+                        <p className="text-primary-100 text-sm mt-0.5">{treeMembers.length} anggota keluarga</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        {exportStats && (
+                            <>
+                                <div className="text-center">
+                                    <p className="text-xl sm:text-2xl font-bold">{exportStats.totalGenerations}</p>
+                                    <p className="text-[10px] text-primary-200 uppercase tracking-wider">Generasi</p>
+                                </div>
+                                <div className="w-px h-8 bg-primary-400/40" />
+                                <div className="text-center">
+                                    <p className="text-xl sm:text-2xl font-bold">{exportStats.totalAlive}</p>
+                                    <p className="text-[10px] text-primary-200 uppercase tracking-wider">Hidup</p>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+
             {/* Tabs */}
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -2160,7 +2185,7 @@ export default function BaniContent({
                                 }`}
                         >
                             <List className="w-4 h-4" />
-                            Daftar ({members.length})
+                            Daftar ({treeMembers.length})
                         </button>
                     </div>
 
@@ -2494,7 +2519,7 @@ export default function BaniContent({
                 </>
             ) : (
                 /* Member List Tab */
-                <MemberListTab members={members} baniId={baniId} onSelectMember={setDetailPopupMember} />
+                <MemberListTab members={treeMembers as any} baniId={baniId} onSelectMember={setDetailPopupMember} />
             )}
 
             {/* Quick Add Menu (top-level, outside transform) */}
