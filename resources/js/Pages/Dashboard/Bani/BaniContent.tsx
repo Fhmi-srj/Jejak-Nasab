@@ -285,13 +285,13 @@ function QuickAddMenu({
     onClose: () => void;
 }) {
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
             {/* Backdrop */}
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
             {/* Modal */}
             <div
-                className="relative w-full max-w-xs bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden"
+                className="relative w-full max-w-xs sm:max-w-xs bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[92vh]"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -491,9 +491,9 @@ function QuickAddModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[92vh] overflow-y-auto animate-scale-in">
                 <div className="sticky top-0 bg-white rounded-t-2xl border-b border-surface-100 p-5 flex items-start justify-between z-10">
                     <div>
                         <h2 className="text-lg font-bold text-surface-900">{title}</h2>
@@ -1040,10 +1040,10 @@ function MemberDetailPopup({ member, baniId, onClose, onEdit, onDelete }: { memb
     const hasParents = member.father || member.mother;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-8 sm:items-center sm:pt-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
             <div
-                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[90vh] flex flex-col"
+                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[92vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -1319,10 +1319,10 @@ function AddMemberModal({
     const labelClass = "block text-xs font-medium text-surface-600 mb-1";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-8 sm:items-center sm:pt-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
             <div
-                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[90vh] flex flex-col"
+                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[92vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -1647,10 +1647,10 @@ function EditMemberPopup({
     const labelClass = "block text-xs font-medium text-surface-600 mb-1";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-8 sm:items-center sm:pt-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
             <div
-                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[90vh] flex flex-col"
+                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-scale-in overflow-hidden max-h-[92vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
@@ -2570,9 +2570,9 @@ export default function BaniContent({
 
             {/* Settings Popup */}
             {showSettings && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4">
                     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowSettings(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-scale-in max-h-[85vh] flex flex-col">
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scale-in max-h-[92vh] flex flex-col">
                         <div className="px-5 py-3.5 border-b border-surface-100 flex items-center justify-between flex-shrink-0">
                             <h2 className="text-base font-bold text-surface-900 flex items-center gap-2">
                                 <Settings className="w-4.5 h-4.5 text-primary-600" /> Pengaturan
