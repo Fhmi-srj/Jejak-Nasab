@@ -12,6 +12,8 @@ export default function BaniShowPage() {
             <BaniContent
                 baniId={bani.id}
                 baniName={bani.name}
+                baniDescription={bani.description || bani.bani_description || ""}
+                userRole={userRole || "VIEWER"}
                 members={[]}
                 canEdit={canEdit}
                 initialOrientation={bani.tree_orientation || bani.treeOrientation || "VERTICAL"}

@@ -42,6 +42,9 @@ import {
     CalendarDays,
     Palette,
     Flower2,
+    Crown,
+    UsersRound,
+    ArrowLeft,
 } from "lucide-react";
 import { getWhatsAppLink } from "@/lib/utils";
 import ExportTree from "@/Components/ExportTree";
@@ -945,27 +948,33 @@ function MemberListTab({ members, baniId, onSelectMember }: { members: MemberDat
     }, {} as Record<number, MemberData[]>);
 
     return (
-        <div className="space-y-3">
-            {/* Search & Filter - single row */}
-            <div className="flex gap-2 items-center">
+        <div className="space-y-4">
+            <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-surface-900">
+                    Daftar Anggota ({members.length})
+                </h2>
+            </div>
+
+            {/* Search & Filter */}
+            <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
                     <input
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-900 placeholder-surface-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
-                        placeholder="Cari nama..."
+                        className="touch-target w-full pl-10 pr-4 py-3 rounded-xl border border-surface-200 text-surface-900 placeholder-surface-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
+                        placeholder="Cari nama atau kota..."
                     />
                 </div>
                 <select
                     value={filterGeneration === null ? "" : filterGeneration}
                     onChange={(e) => setFilterGeneration(e.target.value === "" ? null : parseInt(e.target.value))}
-                    className="px-3 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-700 focus:outline-none focus:border-primary-500 bg-white min-w-[100px]"
+                    className="touch-target px-4 py-3 rounded-xl border border-surface-200 text-surface-700 focus:outline-none focus:border-primary-500 bg-white"
                 >
-                    <option value="">Semua</option>
+                    <option value="">Semua Generasi</option>
                     {generations.map((g) => (
-                        <option key={g} value={g}>Gen {g + 1}</option>
+                        <option key={g} value={g}>Generasi {g + 1}</option>
                     ))}
                 </select>
             </div>
@@ -975,36 +984,67 @@ function MemberListTab({ members, baniId, onSelectMember }: { members: MemberDat
                 .sort((a, b) => Number(a) - Number(b))
                 .map((gen) => (
                     <div key={gen}>
-                        <h3 className="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-2">
+                        <h3 className="text-sm font-semibold text-surface-400 uppercase tracking-wider mb-3">
                             Generasi {Number(gen) + 1}
                         </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {grouped[Number(gen)].map((member) => (
                                 <button
                                     key={member.id}
                                     onClick={() => onSelectMember(member)}
-                                    className="group p-3 rounded-xl bg-white border border-surface-200 hover:border-primary-200 hover:shadow-md transition-all flex items-center gap-3 text-left w-full"
+                                    className="group p-4 rounded-xl bg-white border border-surface-200 hover:border-primary-200 hover:shadow-md transition-all flex items-center gap-3 text-left w-full"
                                 >
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${member.gender === "MALE" ? "bg-blue-50 text-blue-600" : "bg-pink-50 text-pink-600"} ${!member.isAlive ? "opacity-60" : ""}`}>
+                                    {/* Avatar */}
+                                    <div
+                                        className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${member.gender === "MALE"
+                                            ? "bg-blue-50 text-blue-600"
+                                            : "bg-pink-50 text-pink-600"
+                                            } ${!member.isAlive ? "opacity-60" : ""}`}
+                                    >
                                         {member.photo ? (
-                                            <img src={member.photo} alt={member.fullName} className="w-10 h-10 rounded-full object-cover" />
+                                            <img src={member.photo} alt={member.fullName} className="w-12 h-12 rounded-full object-cover" />
                                         ) : (
-                                            <User className="w-5 h-5" />
+                                            <User className="w-6 h-6" />
                                         )}
                                     </div>
+
+                                    {/* Info */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-1.5">
+                                        <div className="flex items-center gap-2">
                                             <p className="text-sm font-semibold text-surface-900 truncate">{member.fullName}</p>
                                             {!member.isAlive && (
-                                                <span className="text-[10px] px-1 py-0.5 rounded bg-surface-100 text-surface-400 flex-shrink-0">Alm.</span>
+                                                <span className="text-xs px-1.5 py-0.5 rounded bg-surface-100 text-surface-500">Alm.</span>
                                             )}
                                         </div>
-                                        {member.nickname && <p className="text-xs text-surface-400 truncate">{member.nickname}</p>}
+                                        {member.nickname && <p className="text-xs text-surface-400">{member.nickname}</p>}
+                                        <div className="flex items-center gap-2 mt-1">
+                                            {member.father && (
+                                                <span className="text-xs text-surface-400">Ayah: {member.father.fullName}</span>
+                                            )}
+                                        </div>
                                         {member.city && (
-                                            <p className="text-[11px] text-surface-400 mt-0.5 flex items-center gap-0.5"><MapPin className="w-2.5 h-2.5" /> {member.city}</p>
+                                            <p className="text-xs text-surface-400 mt-0.5 flex items-center gap-0.5">
+                                                <MapPin className="w-2.5 h-2.5" /> {member.city}
+                                            </p>
                                         )}
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-surface-300 group-hover:text-primary-500 transition-colors flex-shrink-0" />
+
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-1">
+                                        {member.phoneWhatsapp && (
+                                            <a
+                                                href={getWhatsAppLink(member.phoneWhatsapp)}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="touch-target p-2 rounded-lg hover:bg-green-50 transition-colors"
+                                                title="Chat WhatsApp"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <Phone className="w-4.5 h-4.5 text-green-600" />
+                                            </a>
+                                        )}
+                                        <ChevronRight className="w-4 h-4 text-surface-300 group-hover:text-primary-500 transition-colors" />
+                                    </div>
                                 </button>
                             ))}
                         </div>
@@ -1014,7 +1054,7 @@ function MemberListTab({ members, baniId, onSelectMember }: { members: MemberDat
             {filtered.length === 0 && (
                 <div className="text-center py-12 rounded-xl bg-white border border-surface-200">
                     <User className="w-10 h-10 text-surface-300 mx-auto mb-3" />
-                    <p className="text-surface-500 text-sm">Tidak ada anggota ditemukan</p>
+                    <p className="text-surface-500">Tidak ada anggota ditemukan</p>
                 </div>
             )}
         </div>
@@ -1847,6 +1887,8 @@ function EditMemberPopup({
 export default function BaniContent({
     baniId,
     baniName,
+    baniDescription = "",
+    userRole = "VIEWER",
     members,
     canEdit,
     initialOrientation = "VERTICAL",
@@ -1860,6 +1902,8 @@ export default function BaniContent({
 }: {
     baniId: string;
     baniName: string;
+    baniDescription?: string;
+    userRole?: string;
     members: MemberData[];
     canEdit: boolean;
     initialOrientation?: string;
@@ -2138,27 +2182,53 @@ export default function BaniContent({
 
     return (
         <div className="space-y-4">
-            {/* Bani Info Card */}
-            <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-700 p-4 sm:p-5 text-white shadow-lg shadow-primary-600/20">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h2 className="text-lg sm:text-xl font-bold">{baniName}</h2>
-                        <p className="text-primary-100 text-sm mt-0.5">{treeMembers.length} anggota keluarga</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {exportStats && (
-                            <>
-                                <div className="text-center">
-                                    <p className="text-xl sm:text-2xl font-bold">{exportStats.totalGenerations}</p>
-                                    <p className="text-[10px] text-primary-200 uppercase tracking-wider">Generasi</p>
-                                </div>
-                                <div className="w-px h-8 bg-primary-400/40" />
-                                <div className="text-center">
-                                    <p className="text-xl sm:text-2xl font-bold">{exportStats.totalAlive}</p>
-                                    <p className="text-[10px] text-primary-200 uppercase tracking-wider">Hidup</p>
-                                </div>
-                            </>
+            {/* Header + Stats Combined Card */}
+            <div className="rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-4 sm:p-6 text-white shadow-lg shadow-primary-600/20">
+                <div className="flex items-start gap-3">
+                    <a
+                        href="/dashboard"
+                        className="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition-colors mt-0.5"
+                    >
+                        <ArrowLeft className="w-4 h-4 text-white" />
+                    </a>
+                    <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <h1 className="text-lg sm:text-2xl font-bold truncate">
+                                {baniName}
+                            </h1>
+                            {userRole === "ADMIN" && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/20 text-white text-xs font-medium">
+                                    <Crown className="w-3 h-3" /> Admin
+                                </span>
+                            )}
+                        </div>
+                        {baniDescription && (
+                            <p className="text-primary-100 text-xs sm:text-sm mt-1 line-clamp-2">{baniDescription}</p>
                         )}
+                    </div>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3 mt-4">
+                    <div className="bg-white/10 rounded-xl p-2 sm:p-3 text-center">
+                        <Users className="w-4 h-4 mx-auto mb-1 text-primary-200" />
+                        <p className="text-lg sm:text-xl font-bold">{treeMembers.length}</p>
+                        <p className="text-[10px] sm:text-xs text-primary-200">Total</p>
+                    </div>
+                    <div className="bg-white/10 rounded-xl p-2 sm:p-3 text-center">
+                        <Heart className="w-4 h-4 mx-auto mb-1 text-green-300" />
+                        <p className="text-lg sm:text-xl font-bold">{exportStats?.totalAlive ?? 0}</p>
+                        <p className="text-[10px] sm:text-xs text-primary-200">Hidup</p>
+                    </div>
+                    <div className="bg-white/10 rounded-xl p-2 sm:p-3 text-center">
+                        <MapPin className="w-4 h-4 mx-auto mb-1 text-blue-300" />
+                        <p className="text-lg sm:text-xl font-bold">{exportStats?.totalGenerations ?? 0}</p>
+                        <p className="text-[10px] sm:text-xs text-primary-200">Generasi</p>
+                    </div>
+                    <div className="bg-white/10 rounded-xl p-2 sm:p-3 text-center">
+                        <UsersRound className="w-4 h-4 mx-auto mb-1 text-purple-300" />
+                        <p className="text-lg sm:text-xl font-bold">{exportStats?.totalMale ?? 0}/{exportStats?.totalFemale ?? 0}</p>
+                        <p className="text-[10px] sm:text-xs text-primary-200">L / P</p>
                     </div>
                 </div>
             </div>
