@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\Bani;
 use App\Models\BaniUser;
 use App\Models\Member;
@@ -22,8 +23,22 @@ class AdminPageController extends Controller
             'totalMembers' => Member::count(),
         ];
 
+        // Pending users list
+        $pendingUsers = User::where('status', 'PENDING')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get(['id', 'name', 'email', 'created_at']);
+
+        // Recent activity
+        $recentActivity = ActivityLog::with(['user:id,name,avatar', 'bani:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
+            'pendingUsers' => $pendingUsers,
+            'recentActivity' => $recentActivity,
         ]);
     }
 

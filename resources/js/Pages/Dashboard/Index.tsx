@@ -44,7 +44,7 @@ interface Props {
 }
 
 export default function DashboardPage() {
-    const { user, banis, totalBanis, totalMembers, recentLogs } = usePage().props as any;
+    const { user, banis, totalBanis, totalMembers, recentLogs, adminStats, pendingUsers } = usePage().props as any;
 
     const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "ADMIN";
 
@@ -64,6 +64,100 @@ export default function DashboardPage() {
                             Selamat datang kembali di Jejak Nasab
                         </p>
                     </div>
+
+                    {/* ============ ADMIN SECTION ============ */}
+                    {isAdmin && adminStats && (
+                        <div className="animate-slide-up space-y-6">
+                            {/* Admin Stats Banner */}
+                            <div className="rounded-2xl bg-gradient-to-br from-amber-50 via-gold-50 to-orange-50 border border-gold-200/60 p-5">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold-500 to-amber-600 flex items-center justify-center">
+                                        <Shield className="w-4 h-4 text-white" />
+                                    </div>
+                                    <h2 className="text-sm font-bold text-gold-800 uppercase tracking-wider">Panel Admin</h2>
+                                </div>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                    <div className="bg-white/70 backdrop-blur rounded-xl p-3 border border-gold-100">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Users className="w-4 h-4 text-blue-500" />
+                                            <span className="text-[11px] text-surface-500 font-medium">Pengguna</span>
+                                        </div>
+                                        <p className="text-xl font-bold text-surface-900">{adminStats.totalUsers}</p>
+                                    </div>
+                                    <div className="bg-white/70 backdrop-blur rounded-xl p-3 border border-gold-100">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Clock className="w-4 h-4 text-gold-500" />
+                                            <span className="text-[11px] text-surface-500 font-medium">Pending</span>
+                                        </div>
+                                        <p className="text-xl font-bold text-gold-600">{adminStats.pendingCount}</p>
+                                    </div>
+                                    <div className="bg-white/70 backdrop-blur rounded-xl p-3 border border-gold-100">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <TreePine className="w-4 h-4 text-primary-500" />
+                                            <span className="text-[11px] text-surface-500 font-medium">Bani</span>
+                                        </div>
+                                        <p className="text-xl font-bold text-surface-900">{adminStats.totalBanis}</p>
+                                    </div>
+                                    <div className="bg-white/70 backdrop-blur rounded-xl p-3 border border-gold-100">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <UserCheck className="w-4 h-4 text-green-500" />
+                                            <span className="text-[11px] text-surface-500 font-medium">Anggota</span>
+                                        </div>
+                                        <p className="text-xl font-bold text-surface-900">{adminStats.totalMembersGlobal}</p>
+                                    </div>
+                                </div>
+
+                                {/* Admin Quick Links */}
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <Link href="/admin/users" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 border border-gold-200 text-xs font-medium text-gold-700 hover:bg-white transition-colors">
+                                        <Users className="w-3.5 h-3.5" /> Kelola Pengguna
+                                    </Link>
+                                    <Link href="/admin/banis" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 border border-gold-200 text-xs font-medium text-gold-700 hover:bg-white transition-colors">
+                                        <TreePine className="w-3.5 h-3.5" /> Semua Bani
+                                    </Link>
+                                    <Link href="/dashboard/logs" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 border border-gold-200 text-xs font-medium text-gold-700 hover:bg-white transition-colors">
+                                        <Activity className="w-3.5 h-3.5" /> Log Aktivitas
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Pending Users Card */}
+                            {pendingUsers && pendingUsers.length > 0 && (
+                                <div className="rounded-2xl bg-white border border-surface-200 overflow-hidden">
+                                    <div className="px-5 py-3 border-b border-surface-100 flex items-center justify-between bg-gold-50/50">
+                                        <h3 className="text-sm font-semibold text-surface-900 flex items-center gap-2">
+                                            <Clock className="w-4 h-4 text-gold-500" />
+                                            Menunggu Persetujuan
+                                        </h3>
+                                        <Link href="/admin/users" className="text-xs text-gold-600 font-medium hover:text-gold-500 flex items-center gap-1">
+                                            Kelola <ArrowRight className="w-3.5 h-3.5" />
+                                        </Link>
+                                    </div>
+                                    <div className="divide-y divide-surface-100">
+                                        {pendingUsers.map((pu: any) => (
+                                            <div key={pu.id} className="px-5 py-3 flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 text-xs font-bold">
+                                                        {pu.name?.[0]?.toUpperCase()}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-medium text-surface-900">{pu.name}</p>
+                                                        <p className="text-xs text-surface-400">{pu.email}</p>
+                                                    </div>
+                                                </div>
+                                                <span className="text-xs text-surface-400">
+                                                    {new Date(pu.created_at).toLocaleDateString("id-ID", {
+                                                        day: "numeric",
+                                                        month: "short",
+                                                    })}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* ============ USER STATS ============ */}
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 animate-slide-up">

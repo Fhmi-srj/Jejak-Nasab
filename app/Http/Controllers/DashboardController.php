@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\Bani;
 use App\Models\BaniUser;
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,19 +39,38 @@ class DashboardController extends Controller
 
         // Recent activity logs
         $baniIds = $banis->pluck('id')->toArray();
+        $isAdmin = in_array($user->role, ['SUPER_ADMIN', 'ADMIN']);
+
         $recentLogs = ActivityLog::whereIn('bani_id', $baniIds)
-            ->with('user:id,name,avatar')
+            ->with(['user:id,name,avatar', 'bani:id,name'])
             ->orderBy('created_at', 'desc')
-            ->limit(10)
+            ->limit($isAdmin ? 10 : 5)
             ->get();
 
-        return Inertia::render('Dashboard/Index', [
+        $data = [
             'user' => $user,
             'banis' => $banis,
             'totalBanis' => $totalBanis,
             'totalMembers' => $totalMembers,
             'recentLogs' => $recentLogs,
-        ]);
+        ];
+
+        // Admin-only data
+        if ($isAdmin) {
+            $data['adminStats'] = [
+                'totalUsers' => User::count(),
+                'pendingCount' => User::where('status', 'PENDING')->count(),
+                'totalBanis' => Bani::count(),
+                'totalMembersGlobal' => Member::count(),
+            ];
+
+            $data['pendingUsers'] = User::where('status', 'PENDING')
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get(['id', 'name', 'email', 'created_at']);
+        }
+
+        return Inertia::render('Dashboard/Index', $data);
     }
 
     public function logs(Request $request): Response
