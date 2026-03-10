@@ -25,6 +25,7 @@ export interface TreeThemeConfig {
     };
     line: {
         color: string;
+        hex: string;
     };
     spouse: {
         maleBg: string;
@@ -64,7 +65,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-pink-100",
             femaleText: "text-pink-600",
         },
-        line: { color: "bg-primary-200" },
+        line: { color: "bg-primary-200", hex: "#bbf7d0" },
         spouse: {
             maleBg: "bg-pink-50",
             maleText: "text-pink-500",
@@ -77,7 +78,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             genBg: "bg-primary-100",
             genText: "text-primary-700",
         },
-        export: { headerGradient: ["#15803d", "#16a34a", "#22c55e"] },
+        export: { headerGradient: ["#16a34a", "#22c55e", "#34d399"] },
     },
 
     CLASSIC: {
@@ -100,7 +101,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-[#f0d5d5]",
             femaleText: "text-[#a0522d]",
         },
-        line: { color: "bg-[#d4a843]/50" },
+        line: { color: "bg-[#d4a843]/50", hex: "#d4a843" },
         spouse: {
             maleBg: "bg-[#f5e6d3]",
             maleText: "text-[#a0522d]",
@@ -136,7 +137,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-gradient-to-br from-pink-100 to-purple-100",
             femaleText: "text-purple-600",
         },
-        line: { color: "bg-indigo-300" },
+        line: { color: "bg-indigo-300", hex: "#a5b4fc" },
         spouse: {
             maleBg: "bg-purple-50",
             maleText: "text-purple-500",
@@ -172,7 +173,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-rose-100/80",
             femaleText: "text-rose-600",
         },
-        line: { color: "bg-sky-300/60" },
+        line: { color: "bg-sky-300/60", hex: "#7dd3fc" },
         spouse: {
             maleBg: "bg-rose-50/70",
             maleText: "text-rose-500",
@@ -208,7 +209,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-pink-900/60",
             femaleText: "text-pink-300",
         },
-        line: { color: "bg-slate-600" },
+        line: { color: "bg-slate-600", hex: "#475569" },
         spouse: {
             maleBg: "bg-pink-900/30",
             maleText: "text-pink-300",
@@ -244,7 +245,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             femaleBg: "bg-amber-100",
             femaleText: "text-amber-700",
         },
-        line: { color: "bg-emerald-300" },
+        line: { color: "bg-emerald-300", hex: "#6ee7b7" },
         spouse: {
             maleBg: "bg-amber-50",
             maleText: "text-amber-600",
