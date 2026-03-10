@@ -42,7 +42,6 @@ export default function EditMemberPage({
 }: {
     params: Promise<{ id: string; memberId: string }>;
 }) {
-    const router = useRouter();
     const [baniId, setBaniId] = useState("");
     const [memberId, setMemberId] = useState("");
     const [loading, setLoading] = useState(true);
@@ -150,8 +149,7 @@ export default function EditMemberPage({
                 return;
             }
 
-            router.push(`/dashboard/bani/${baniId}/members/${memberId}`);
-            router.refresh();
+            router.visit(`/dashboard/bani/${baniId}/members/${memberId}`);
         } catch {
             setError("Terjadi kesalahan. Silakan coba lagi.");
         } finally {
@@ -176,8 +174,7 @@ export default function EditMemberPage({
                 return;
             }
 
-            router.push(`/dashboard/bani/${baniId}`);
-            router.refresh();
+            router.visit(`/dashboard/bani/${baniId}`);
         } catch {
             setError("Gagal menghapus anggota");
         } finally {
