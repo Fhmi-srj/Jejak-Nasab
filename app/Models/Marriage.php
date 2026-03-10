@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Traits\CamelCaseSerializable;
 
 class Marriage extends Model
 {
-    use HasUuids;
+    use HasUuids, CamelCaseSerializable;
 
     protected $table = 'marriages';
     public $timestamps = false;

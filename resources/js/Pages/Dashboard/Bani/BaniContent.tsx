@@ -43,7 +43,7 @@ import {
     Palette,
     Flower2,
 } from "lucide-react";
-import { getWhatsAppLink } from "@/lib/utils";
+import { getWhatsAppLink, csrfFetch } from "@/lib/utils";
 import ExportTree from "@/Components/ExportTree";
 import { TREE_THEMES, THEME_KEYS, type ThemeKey, type TreeThemeConfig } from "@/lib/treeThemes";
 
@@ -264,7 +264,7 @@ function buildTree(members: TreeMember[], rootId?: string): TreeNodeData | null 
         const children = members
             .filter((m) => m.fatherId === member.id || m.motherId === member.id)
             .filter((m, i, arr) => arr.findIndex((a) => a.id === m.id) === i)
-            .sort((a, b) => a.fullName.localeCompare(b.fullName));
+            .sort((a, b) => (a.fullName || '').localeCompare(b.fullName || ''));
 
         return { ...member, children: children.map((c) => buildNode(c)) };
     }
@@ -449,7 +449,7 @@ function QuickAddModal({
                 motherId = member.motherId || undefined;
             }
 
-            const res = await fetch("/api/members", {
+            const res = await csrfFetch("/api/members", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -472,7 +472,7 @@ function QuickAddModal({
             if (type === "spouse") {
                 const husbandId = member.gender === "MALE" ? member.id : data.id;
                 const wifeId = member.gender === "FEMALE" ? member.id : data.id;
-                const marriageRes = await fetch("/api/marriages", {
+                const marriageRes = await csrfFetch("/api/marriages", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ husbandId, wifeId }),
@@ -824,7 +824,7 @@ function TreeNode({
                 {hasChildren && isExpanded && (
                     <div className="flex flex-row items-center">
                         {/* Horizontal line from parent to vertical bar */}
-                        <div className={`h-0.5 w-8 bg-gradient-to-r ${theme.line.color}`} />
+                        <div className="h-0.5 w-8" style={{ backgroundColor: theme.line.hex }} />
 
                         {/* Children column with vertical connectors */}
                         <div className="flex flex-col">
@@ -833,13 +833,13 @@ function TreeNode({
                                     {/* Vertical connector bar — top half + bottom half */}
                                     {node.children.length > 1 && (
                                         <div className="flex flex-col w-0.5 self-stretch">
-                                            <div className={`flex-1 w-full ${index === 0 ? "bg-transparent" : theme.line.color}`} />
-                                            <div className={`flex-1 w-full ${index === node.children.length - 1 ? "bg-transparent" : theme.line.color}`} />
+                                            <div className="flex-1 w-full" style={{ backgroundColor: index === 0 ? 'transparent' : theme.line.hex }} />
+                                            <div className="flex-1 w-full" style={{ backgroundColor: index === node.children.length - 1 ? 'transparent' : theme.line.hex }} />
                                         </div>
                                     )}
 
                                     {/* Horizontal stub from vertical bar to child node */}
-                                    <div className={`h-0.5 w-6 ${theme.line.color}`} />
+                                    <div className="h-0.5 w-6" style={{ backgroundColor: theme.line.hex }} />
 
                                     {/* Child node */}
                                     <div className="py-2 sm:py-3">
@@ -874,7 +874,7 @@ function TreeNode({
             {hasChildren && isExpanded && (
                 <div className="flex flex-col items-center">
                     {/* Vertical line from parent down to horizontal bar */}
-                    <div className={`w-0.5 h-8 bg-gradient-to-b ${theme.line.color}`} />
+                    <div className="w-0.5 h-8" style={{ backgroundColor: theme.line.hex }} />
 
                     {/* Children row with horizontal connectors */}
                     <div className="flex">
@@ -884,16 +884,14 @@ function TreeNode({
                                 {node.children.length > 1 && (
                                     <div className="flex w-full h-0.5">
                                         {/* Left half of horizontal bar */}
-                                        <div className={`flex-1 h-full ${index === 0 ? "bg-transparent" : theme.line.color
-                                            }`} />
+                                        <div className="flex-1 h-full" style={{ backgroundColor: index === 0 ? 'transparent' : theme.line.hex }} />
                                         {/* Right half of horizontal bar */}
-                                        <div className={`flex-1 h-full ${index === node.children.length - 1 ? "bg-transparent" : theme.line.color
-                                            }`} />
+                                        <div className="flex-1 h-full" style={{ backgroundColor: index === node.children.length - 1 ? 'transparent' : theme.line.hex }} />
                                     </div>
                                 )}
 
                                 {/* Vertical stub from horizontal bar down to child node */}
-                                <div className={`w-0.5 h-6 ${theme.line.color}`} />
+                                <div className="w-0.5 h-6" style={{ backgroundColor: theme.line.hex }} />
 
                                 {/* Child node with padding for gap */}
                                 <div className="px-2 sm:px-3">
@@ -1277,7 +1275,7 @@ function AddMemberModal({
             const socialMedia: Record<string, string> = {};
             socialMediaEntries.forEach(e => { if (e.value) socialMedia[e.key] = e.value; });
 
-            const res = await fetch("/api/members", {
+            const res = await csrfFetch("/api/members", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1539,7 +1537,7 @@ function EditMemberPopup({
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch(`/api/members/${memberId}`, {
+                const res = await csrfFetch(`/api/members/${memberId}`, {
                     credentials: 'include',
                 });
                 if (!res.ok) {
@@ -1587,7 +1585,7 @@ function EditMemberPopup({
             const socialMedia: Record<string, string> = {};
             socialMediaEntries.forEach(e => { if (e.value) socialMedia[e.key] = e.value; });
 
-            const res = await fetch(`/api/members/${memberId}`, {
+            const res = await csrfFetch(`/api/members/${memberId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -1626,7 +1624,7 @@ function EditMemberPopup({
         if (!confirm("Apakah Anda yakin ingin menghapus anggota ini? Tindakan ini tidak dapat dibatalkan.")) return;
         setDeleting(true);
         try {
-            const res = await fetch(`/api/members/${memberId}`, { method: "DELETE" });
+            const res = await csrfFetch(`/api/members/${memberId}`, { method: "DELETE" });
             if (!res.ok) {
                 const data = await res.json();
                 setError(data.error);
@@ -1936,7 +1934,7 @@ export default function BaniContent({
     // Fetch tree members (with marriage data)
     const fetchTreeMembers = useCallback(async () => {
         try {
-            const res = await fetch(`/api/members?baniId=${baniId}`);
+            const res = await csrfFetch(`/api/members?baniId=${baniId}`);
             const data = await res.json();
             setTreeMembers(data);
 
@@ -2069,7 +2067,7 @@ export default function BaniContent({
     const saveSettings = useCallback(async (newOrientation: string, newIsPublic: boolean, extras?: { showWaPublic?: boolean; showBirthPublic?: boolean; showAddressPublic?: boolean; showSocmedPublic?: boolean; cardTheme?: string }) => {
         setSavingSettings(true);
         try {
-            await fetch(`/api/banis/${baniId}/settings`, {
+            await csrfFetch(`/api/banis/${baniId}/settings`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ treeOrientation: newOrientation, isPublic: newIsPublic, ...extras }),
@@ -2097,7 +2095,7 @@ export default function BaniContent({
         setDeletingBani(true);
         setDeleteError("");
         try {
-            const res = await fetch(`/api/banis/${baniId}`, { method: "DELETE" });
+            const res = await csrfFetch(`/api/banis/${baniId}`, { method: "DELETE" });
             if (!res.ok) {
                 const data = await res.json();
                 setDeleteError(data.error || "Gagal menghapus");
@@ -2138,6 +2136,65 @@ export default function BaniContent({
 
     return (
         <div className="space-y-4">
+            {/* Hero Infographic Banner */}
+            {exportStats && (
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-emerald-400 p-5 sm:p-6 shadow-xl shadow-primary-600/20">
+                    {/* Decorative background elements */}
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+                    <div className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/5 rounded-full" />
+
+                    {/* Header */}
+                    <div className="relative z-10 mb-4">
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                <Flower2 className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                                <p className="text-white/70 text-[11px] font-medium uppercase tracking-wider">Silsilah Keluarga</p>
+                                <h2 className="text-white text-lg sm:text-xl font-bold leading-tight">{baniName}</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Stats Grid */}
+                    <div className="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-colors">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Users className="w-4 h-4 text-white/80" />
+                                <span className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">Total</span>
+                            </div>
+                            <p className="text-2xl sm:text-3xl font-bold text-white">{exportStats.totalMembers}</p>
+                            <p className="text-white/60 text-[10px] mt-0.5">Anggota</p>
+                        </div>
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-colors">
+                            <div className="flex items-center gap-2 mb-1">
+                                <User className="w-4 h-4 text-white/80" />
+                                <span className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">L / P</span>
+                            </div>
+                            <p className="text-2xl sm:text-3xl font-bold text-white">{exportStats.totalMale} / {exportStats.totalFemale}</p>
+                            <p className="text-white/60 text-[10px] mt-0.5">Laki / Perempuan</p>
+                        </div>
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-colors">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Heart className="w-4 h-4 text-white/80" />
+                                <span className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">Hidup</span>
+                            </div>
+                            <p className="text-2xl sm:text-3xl font-bold text-white">{exportStats.totalAlive}</p>
+                            <p className="text-white/60 text-[10px] mt-0.5">Masih Hidup</p>
+                        </div>
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/20 transition-colors">
+                            <div className="flex items-center gap-2 mb-1">
+                                <TreePine className="w-4 h-4 text-white/80" />
+                                <span className="text-white/70 text-[10px] font-semibold uppercase tracking-wider">Generasi</span>
+                            </div>
+                            <p className="text-2xl sm:text-3xl font-bold text-white">{exportStats.totalGenerations}</p>
+                            <p className="text-white/60 text-[10px] mt-0.5">Keturunan</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Tabs */}
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -2160,7 +2217,7 @@ export default function BaniContent({
                                 }`}
                         >
                             <List className="w-4 h-4" />
-                            Daftar ({members.length})
+                            Daftar ({treeMembers.length})
                         </button>
                     </div>
 
@@ -2409,7 +2466,7 @@ export default function BaniContent({
                                                             onClick={async () => {
                                                                 if (!confirm(`Hapus anggota "${m.fullName}"? Tindakan ini tidak dapat dibatalkan.`)) return;
                                                                 try {
-                                                                    const res = await fetch(`/api/members/${m.id}`, { method: 'DELETE' });
+                                                                    const res = await csrfFetch(`/api/members/${m.id}`, { method: 'DELETE' });
                                                                     if (!res.ok) {
                                                                         const data = await res.json();
                                                                         alert(data.error || 'Gagal menghapus');
@@ -2462,7 +2519,7 @@ export default function BaniContent({
                                                                             );
                                                                             if (!action) return;
                                                                             try {
-                                                                                const res = await fetch(`/api/members/${entry.spouseId}`, { method: 'DELETE' });
+                                                                                const res = await csrfFetch(`/api/members/${entry.spouseId}`, { method: 'DELETE' });
                                                                                 if (!res.ok) {
                                                                                     const data = await res.json();
                                                                                     alert(data.error || 'Gagal menghapus');
@@ -2494,7 +2551,7 @@ export default function BaniContent({
                 </>
             ) : (
                 /* Member List Tab */
-                <MemberListTab members={members} baniId={baniId} onSelectMember={setDetailPopupMember} />
+                <MemberListTab members={treeMembers as any} baniId={baniId} onSelectMember={setDetailPopupMember} />
             )}
 
             {/* Quick Add Menu (top-level, outside transform) */}
@@ -2526,7 +2583,7 @@ export default function BaniContent({
                     onEdit={(id) => setEditPopupMemberId(id)}
                     onDelete={canEdit ? async (id) => {
                         try {
-                            const res = await fetch(`/api/members/${id}`, { method: 'DELETE' });
+                            const res = await csrfFetch(`/api/members/${id}`, { method: 'DELETE' });
                             if (!res.ok) {
                                 const data = await res.json();
                                 alert(data.error || 'Gagal menghapus');
@@ -2746,8 +2803,8 @@ export default function BaniContent({
                                                         {item.icon}
                                                         <span className="font-medium">{item.label}</span>
                                                     </span>
-                                                    <div className={`w-8 h-4.5 rounded-full transition-colors relative ${item.value ? 'bg-green-500' : 'bg-surface-300'}`}>
-                                                        <div className={`absolute top-0.5 w-3.5 h-3.5 rounded-full bg-white shadow transition-transform ${item.value ? 'translate-x-[14px]' : 'translate-x-0.5'}`} />
+                                                    <div className={`w-9 h-5 rounded-full transition-colors relative ${item.value ? 'bg-green-500' : 'bg-surface-300'}`}>
+                                                        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${item.value ? 'translate-x-4' : 'translate-x-0.5'}`} />
                                                     </div>
                                                 </button>
                                             ))}

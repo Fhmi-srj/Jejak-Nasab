@@ -1,0 +1,10 @@
+var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/banis/[id]/settings/route.js")
+R.c("server/chunks/[externals]__eb4ac124._.js")
+R.c("server/chunks/node_modules_next_ba9d75cf._.js")
+R.c("server/chunks/node_modules_@auth_core_36df0127._.js")
+R.c("server/chunks/node_modules_jose_dist_webapi_868b124b._.js")
+R.c("server/chunks/[root-of-the-server]__a62b8109._.js")
+R.c("server/chunks/[root-of-the-server]__1f8f93b4._.js")
+R.c("server/chunks/_next-internal_server_app_api_banis_[id]_settings_route_actions_0a1d5046.js")
+R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/banis/[id]/settings/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)")
+module.exports=R.m("[project]/node_modules/next/dist/esm/build/templates/app-route.js { INNER_APP_ROUTE => \"[project]/src/app/api/banis/[id]/settings/route.ts [app-route] (ecmascript)\" } [app-route] (ecmascript)").exports

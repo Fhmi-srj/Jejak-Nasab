@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { csrfFetch } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 import {
@@ -22,7 +23,7 @@ export default function CreateBaniPage() {
         setLoading(true);
 
         try {
-            const res = await fetch("/api/banis", {
+            const res = await csrfFetch("/api/banis", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

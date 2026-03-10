@@ -17,6 +17,7 @@ export default function MemberCreatePage() {
 
 // The form component (copied from original with adaptations)
 import { useState, useEffect } from "react";
+import { csrfFetch } from "@/lib/utils";
 import { Link, router as inertiaRouter } from "@inertiajs/react";
 import {
     ArrowLeft, Save, User, Calendar, MapPin, Phone, AtSign, FileText, Users
@@ -45,7 +46,7 @@ function MemberAddForm({ baniId }: { baniId: string }) {
         setSaving(true);
         setError("");
         try {
-            const res = await fetch("/api/members", {
+            const res = await csrfFetch("/api/members", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ...formData, baniId }),

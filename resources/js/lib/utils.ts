@@ -65,3 +65,26 @@ export function timeAgo(date: Date | string): string {
     if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} bulan lalu`;
     return `${Math.floor(diffInSeconds / 31536000)} tahun lalu`;
 }
+
+/**
+ * Get CSRF token from the XSRF-TOKEN cookie (set by Laravel middleware).
+ */
+export function getCsrfToken(): string {
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+}
+
+/**
+ * fetch() wrapper that automatically includes CSRF token and Accept headers.
+ * Use this instead of raw fetch() for all API calls.
+ */
+export function csrfFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const headers = new Headers(options.headers || {});
+    if (!headers.has('X-XSRF-TOKEN')) {
+        headers.set('X-XSRF-TOKEN', getCsrfToken());
+    }
+    if (!headers.has('Accept')) {
+        headers.set('Accept', 'application/json');
+    }
+    return fetch(url, { ...options, headers, credentials: 'same-origin' });
+}

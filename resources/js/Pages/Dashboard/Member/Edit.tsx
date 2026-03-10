@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { csrfFetch } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 import {
@@ -121,7 +122,7 @@ export default function EditMemberPage({
             if (instagram) socialMedia.instagram = instagram;
             if (facebook) socialMedia.facebook = facebook;
 
-            const res = await fetch(`/api/members/${memberId}`, {
+            const res = await csrfFetch(`/api/members/${memberId}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -164,7 +165,7 @@ export default function EditMemberPage({
 
         setDeleting(true);
         try {
-            const res = await fetch(`/api/members/${memberId}`, {
+            const res = await csrfFetch(`/api/members/${memberId}`, {
                 method: "DELETE",
             });
 

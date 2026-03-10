@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { csrfFetch } from "@/lib/utils";
 import { Camera, Loader2, X } from "lucide-react";
 
 export default function PhotoUpload({
@@ -29,7 +30,7 @@ export default function PhotoUpload({
             formData.append("file", file);
             formData.append("memberId", memberId);
 
-            const res = await fetch("/api/upload", {
+            const res = await csrfFetch("/api/upload", {
                 method: "POST",
                 body: formData,
             });

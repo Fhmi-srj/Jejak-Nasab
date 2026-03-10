@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { csrfFetch } from "@/lib/utils";
 import DashboardLayout from "@/Layouts/DashboardLayout";
 import {
     Users,
@@ -39,7 +40,7 @@ export default function AdminUsersPage() {
     const handleStatusUpdate = async (userId: string, status: string) => {
         setActionLoading(userId);
         try {
-            await fetch("/api/admin/users", {
+            await csrfFetch("/api/admin/users", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, status }),
@@ -53,7 +54,7 @@ export default function AdminUsersPage() {
     const handleRoleUpdate = async (userId: string, role: string) => {
         setActionLoading(userId);
         try {
-            await fetch("/api/admin/users", {
+            await csrfFetch("/api/admin/users", {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, role }),
