@@ -2138,7 +2138,7 @@ export default function BaniContent({
         <div className="space-y-4">
             {/* Hero Infographic Banner */}
             {exportStats && (
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-emerald-400 p-5 sm:p-6 shadow-xl shadow-primary-600/20">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-800 via-green-700 to-green-600 p-5 sm:p-6 shadow-xl shadow-green-900/20">
                     {/* Decorative background elements */}
                     <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />

@@ -128,31 +128,23 @@ export default function ExportTree({ treeContainerRef, baniName, stats, isFreeUs
         const headerCenterY = borderWidth + headerHeight / 2;
 
         if (stats) {
-            // --- LEFT COLUMN: Title (centered vertically, right-aligned text) ---
-            const dividerX = canvasWidth / 2;
+            // --- LEFT COLUMN (30%): Title ---
+            const dividerX = Math.round(canvasWidth * 0.30);
 
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 38px 'Segoe UI', system-ui, sans-serif";
-            ctx.textAlign = "right";
-            ctx.fillText("KELUARGA BESAR", dividerX - 30, headerCenterY - 22);
+            ctx.font = "bold 32px 'Segoe UI', system-ui, sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("KELUARGA BESAR", headerContentLeft, headerCenterY - 22);
 
-            ctx.font = "bold 40px 'Segoe UI', system-ui, sans-serif";
-            ctx.fillText(baniName.toUpperCase(), dividerX - 30, headerCenterY + 24);
+            ctx.font = "bold 36px 'Segoe UI', system-ui, sans-serif";
+            ctx.fillText(baniName.toUpperCase(), headerContentLeft, headerCenterY + 24);
 
             // Subtitle
-            ctx.font = "18px 'Segoe UI', system-ui, sans-serif";
+            ctx.font = "16px 'Segoe UI', system-ui, sans-serif";
             ctx.fillStyle = "rgba(255,255,255,0.75)";
-            ctx.fillText("Silsilah Keluarga", dividerX - 30, headerCenterY + 52);
+            ctx.fillText("Silsilah Keluarga", headerContentLeft, headerCenterY + 52);
 
-            // --- Vertical Divider ---
-            ctx.strokeStyle = "rgba(255,255,255,0.25)";
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(dividerX, borderWidth + 30);
-            ctx.lineTo(dividerX, borderWidth + headerHeight - 30);
-            ctx.stroke();
-
-            // --- RIGHT COLUMN: Stats in single row (4 boxes) ---
+            // --- RIGHT COLUMN (70%): Stats in boxes ---
             const statItems = [
                 { label: "TOTAL", value: stats.totalMembers.toString() },
                 { label: "HIDUP", value: stats.totalAlive.toString() },
@@ -160,32 +152,36 @@ export default function ExportTree({ treeContainerRef, baniName, stats, isFreeUs
                 { label: "L / P", value: `${stats.totalMale} / ${stats.totalFemale}` },
             ];
 
-            const rightStartX = dividerX + 24;
+            const rightStartX = dividerX + 20;
             const rightAvailWidth = headerContentRight - rightStartX;
             const statGap = 12;
             const statBoxW = (rightAvailWidth - statGap * 3) / 4;
-            const statBoxH = 90;
+            const statBoxH = 100;
             const gridStartY = headerCenterY - statBoxH / 2;
 
             statItems.forEach((item, i) => {
                 const sx = rightStartX + i * (statBoxW + statGap);
                 const sy = gridStartY;
 
-                // Stat box background
-                ctx.fillStyle = "rgba(255,255,255,0.15)";
-                roundRect(ctx, sx, sy, statBoxW, statBoxH, 12);
+                // Stat box background with border
+                ctx.fillStyle = "rgba(255,255,255,0.18)";
+                roundRect(ctx, sx, sy, statBoxW, statBoxH, 14);
                 ctx.fill();
+                ctx.strokeStyle = "rgba(255,255,255,0.25)";
+                ctx.lineWidth = 1.5;
+                roundRect(ctx, sx, sy, statBoxW, statBoxH, 14);
+                ctx.stroke();
 
                 // Value
                 ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 32px 'Segoe UI', system-ui, sans-serif";
+                ctx.font = "bold 36px 'Segoe UI', system-ui, sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(item.value, sx + statBoxW / 2, sy + 42);
+                ctx.fillText(item.value, sx + statBoxW / 2, sy + 48);
 
                 // Label
                 ctx.fillStyle = "rgba(255,255,255,0.65)";
-                ctx.font = "13px 'Segoe UI', system-ui, sans-serif";
-                ctx.fillText(item.label, sx + statBoxW / 2, sy + 66);
+                ctx.font = "bold 12px 'Segoe UI', system-ui, sans-serif";
+                ctx.fillText(item.label, sx + statBoxW / 2, sy + 72);
             });
         } else {
             // No stats: centered title only
