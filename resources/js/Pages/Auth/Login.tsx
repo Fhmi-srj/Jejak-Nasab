@@ -75,32 +75,6 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    {/* Quick Login for Testing */}
-                    <div className="mt-6 pt-5 border-t border-surface-200">
-                        <p className="text-xs font-semibold text-surface-400 uppercase tracking-wider text-center mb-3">Quick Login (Testing)</p>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button
-                                type="button"
-                                disabled={processing}
-                                onClick={() => router.post("/login", { email: "admin@jejaknasab.com", password: "admin123" })}
-                                className="flex flex-col items-center gap-1 py-3 px-3 rounded-xl bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all group disabled:opacity-50"
-                            >
-                                <span className="text-lg">🛡️</span>
-                                <span className="text-sm font-bold text-emerald-700 group-hover:text-emerald-800">Admin</span>
-                                <span className="text-[10px] text-emerald-500 leading-tight">admin@jejaknasab.com</span>
-                            </button>
-                            <button
-                                type="button"
-                                disabled={processing}
-                                onClick={() => router.post("/login", { email: "budi@example.com", password: "user123" })}
-                                className="flex flex-col items-center gap-1 py-3 px-3 rounded-xl bg-blue-50 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-all group disabled:opacity-50"
-                            >
-                                <span className="text-lg">👤</span>
-                                <span className="text-sm font-bold text-blue-700 group-hover:text-blue-800">User</span>
-                                <span className="text-[10px] text-blue-500 leading-tight">budi@example.com</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Register link */}
