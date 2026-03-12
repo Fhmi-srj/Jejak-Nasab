@@ -78,7 +78,7 @@ export const TREE_THEMES: Record<ThemeKey, TreeThemeConfig> = {
             genBg: "bg-primary-100",
             genText: "text-primary-700",
         },
-        export: { headerGradient: ["#16a34a", "#22c55e", "#34d399"] },
+        export: { headerGradient: ["#166534", "#15803d", "#16a34a"] },
     },
 
     CLASSIC: {
