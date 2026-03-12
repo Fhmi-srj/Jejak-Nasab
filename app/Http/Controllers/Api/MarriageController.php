@@ -22,8 +22,13 @@ class MarriageController extends Controller
                 return response()->json(['error' => 'Husband and wife IDs are required'], 400);
             }
 
-            $husband = Member::select('bani_id')->find($data['husbandId']);
+            $husband = Member::select('id', 'bani_id', 'generation', 'father_id', 'mother_id')->find($data['husbandId']);
             if (!$husband) {
+                return response()->json(['error' => 'Member not found'], 404);
+            }
+
+            $wife = Member::select('id', 'bani_id', 'generation', 'father_id', 'mother_id')->find($data['wifeId']);
+            if (!$wife) {
                 return response()->json(['error' => 'Member not found'], 404);
             }
 
@@ -41,6 +46,29 @@ class MarriageController extends Controller
                 'marriage_date' => !empty($data['marriageDate']) ? $data['marriageDate'] : null,
                 'marriage_order' => $data['marriageOrder'] ?? 1,
             ]);
+
+            // Sync spouse generation: spouse without parents should match partner's generation
+            $husbandHasParent = $husband->father_id || $husband->mother_id;
+            $wifeHasParent = $wife->father_id || $wife->mother_id;
+
+            if (!$wifeHasParent && $husbandHasParent && $wife->generation !== $husband->generation) {
+                $wife->generation = $husband->generation;
+                $wife->save();
+            } elseif (!$husbandHasParent && $wifeHasParent && $husband->generation !== $wife->generation) {
+                $husband->generation = $wife->generation;
+                $husband->save();
+            } elseif (!$wifeHasParent && !$husbandHasParent) {
+                // Both have no parents — sync to the higher generation
+                $maxGen = max($husband->generation, $wife->generation);
+                if ($wife->generation !== $maxGen) {
+                    $wife->generation = $maxGen;
+                    $wife->save();
+                }
+                if ($husband->generation !== $maxGen) {
+                    $husband->generation = $maxGen;
+                    $husband->save();
+                }
+            }
 
             return response()->json($marriage, 201);
         } catch (\Exception $e) {
