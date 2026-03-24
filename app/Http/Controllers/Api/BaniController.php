@@ -9,6 +9,7 @@ use App\Models\BaniUser;
 use App\Models\Marriage;
 use App\Models\Member;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -42,17 +43,23 @@ class BaniController extends Controller
     }
 
     // POST /api/banis
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse|RedirectResponse
     {
         try {
             $user = $request->user();
             $data = $request->all();
 
             if (empty($data['name'])) {
+                if ($request->header('X-Inertia')) {
+                    return back()->withErrors(['error' => 'Nama bani harus diisi']);
+                }
                 return response()->json(['error' => 'Nama bani harus diisi'], 400);
             }
 
             if (empty($data['rootMemberName'])) {
+                if ($request->header('X-Inertia')) {
+                    return back()->withErrors(['error' => 'Nama leluhur (asal nasab) harus diisi']);
+                }
                 return response()->json(['error' => 'Nama leluhur (asal nasab) harus diisi'], 400);
             }
 
@@ -62,9 +69,11 @@ class BaniController extends Controller
 
             if ($userWithTier->tier) {
                 if ($createdBanisCount >= $userWithTier->tier->max_banis) {
-                    return response()->json([
-                        'error' => "Kelas \"{$userWithTier->tier->name}\" hanya bisa membuat maksimal {$userWithTier->tier->max_banis} bani. Upgrade kelas Anda untuk membuat lebih banyak."
-                    ], 403);
+                    $errMsg = "Kelas \"{$userWithTier->tier->name}\" hanya bisa membuat maksimal {$userWithTier->tier->max_banis} bani. Upgrade kelas Anda untuk membuat lebih banyak.";
+                    if ($request->header('X-Inertia')) {
+                        return back()->withErrors(['error' => $errMsg]);
+                    }
+                    return response()->json(['error' => $errMsg], 403);
                 }
             }
 
@@ -105,6 +114,12 @@ class BaniController extends Controller
 
                 return ['bani' => $bani, 'rootMember' => $rootMember];
             });
+
+            // Check if it's an Inertia request — redirect to the new bani page
+            if ($request->header('X-Inertia')) {
+                return redirect("/dashboard/bani/{$result['bani']->id}")
+                    ->with('baniId', $result['bani']->id);
+            }
 
             return response()->json($result, 201);
         } catch (\Exception $e) {

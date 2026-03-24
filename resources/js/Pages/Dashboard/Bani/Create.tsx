@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { csrfFetch } from "@/lib/utils";
 import { router } from "@inertiajs/react";
 import { Link } from "@inertiajs/react";
 import {
@@ -17,36 +16,35 @@ export default function CreateBaniPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         setLoading(true);
 
-        try {
-            const res = await csrfFetch("/api/banis", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    rootMemberName,
-                    rootMemberGender,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error);
-                return;
+        router.post(
+            "/api/banis",
+            {
+                name,
+                description,
+                rootMemberName,
+                rootMemberGender,
+            },
+            {
+                onSuccess: () => {
+                    // Inertia auto-follows the redirect from the server
+                },
+                onError: (errors) => {
+                    setError(
+                        (errors as Record<string, string>).error ||
+                        "Terjadi kesalahan. Silakan coba lagi."
+                    );
+                    setLoading(false);
+                },
+                onFinish: () => {
+                    setLoading(false);
+                },
             }
-
-            router.visit(`/dashboard/bani/${data.bani.id}`);
-        } catch {
-            setError("Terjadi kesalahan. Silakan coba lagi.");
-        } finally {
-            setLoading(false);
-        }
+        );
     };
 
     return (
