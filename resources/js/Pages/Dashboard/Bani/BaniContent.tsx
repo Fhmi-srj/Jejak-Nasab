@@ -1916,7 +1916,7 @@ export default function BaniContent({
     const [showSocmedPublic, setShowSocmedPublic] = useState(initialShowSocmed);
     const [cardTheme, setCardTheme] = useState<ThemeKey>((initialCardTheme || "STANDARD") as ThemeKey);
     const [settingsSaved, setSettingsSaved] = useState(false);
-    const [activeSettingsTab, setActiveSettingsTab] = useState<"orientation" | "theme" | "visibility" | "info">("orientation");
+    const [activeSettingsTab, setActiveSettingsTab] = useState<"orientation" | "theme" | "visibility" | "info">("info");
     const [confirmDeleteName, setConfirmDeleteName] = useState("");
     const [deletingBani, setDeletingBani] = useState(false);
     const [deleteError, setDeleteError] = useState("");
@@ -2693,21 +2693,24 @@ export default function BaniContent({
                         {/* Tab Navigation */}
                         <div className="px-3 pt-3 flex gap-1 flex-shrink-0 bg-surface-50 mx-3 mt-3 rounded-xl p-1">
                             {([
-                                { key: "orientation" as const, label: "Orientasi", icon: <ArrowDownUp className="w-3.5 h-3.5" /> },
-                                { key: "theme" as const, label: "Tema", icon: <Palette className="w-3.5 h-3.5" /> },
-                                { key: "visibility" as const, label: "Visibilitas", icon: isPublic ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" /> },
                                 { key: "info" as const, label: "Info", icon: <Edit className="w-3.5 h-3.5" /> },
+                                { key: "orientation" as const, label: "Pohon", icon: <ArrowDownUp className="w-3.5 h-3.5" /> },
+                                { key: "theme" as const, label: "Tema", icon: <Palette className="w-3.5 h-3.5" /> },
+                                { key: "visibility" as const, label: "Publik", icon: isPublic ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" /> },
                             ]).map(tab => (
                                 <button
                                     key={tab.key}
                                     onClick={() => setActiveSettingsTab(tab.key)}
-                                    className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-all ${activeSettingsTab === tab.key
+                                    title={tab.label}
+                                    className={`flex-1 flex items-center justify-center gap-1.5 px-1 sm:px-2 py-2 rounded-lg text-xs font-medium transition-all ${activeSettingsTab === tab.key
                                         ? "bg-white text-primary-700 shadow-sm border border-surface-200"
                                         : "text-surface-500 hover:text-surface-700"
                                         }`}
                                 >
                                     {tab.icon}
-                                    {tab.label}
+                                    <span className="hidden sm:inline">{tab.label}</span>
+                                    {/* Show label on mobile only if active to save space */}
+                                    <span className="sm:hidden">{activeSettingsTab === tab.key ? tab.label : ''}</span>
                                 </button>
                             ))}
                         </div>
