@@ -53,6 +53,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
         Route::delete('/banis/{id}', [BaniController::class, 'destroy']);
         Route::get('/banis/{id}/settings', [BaniController::class, 'settings']);
         Route::patch('/banis/{id}/settings', [BaniController::class, 'updateSettings']);
+        Route::get('/banis/{id}/info', [BaniController::class, 'info']);
+        Route::patch('/banis/{id}/info', [BaniController::class, 'updateInfo']);
 
         // Members
         Route::get('/members', [MemberController::class, 'index']);

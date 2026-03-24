@@ -1916,11 +1916,19 @@ export default function BaniContent({
     const [showSocmedPublic, setShowSocmedPublic] = useState(initialShowSocmed);
     const [cardTheme, setCardTheme] = useState<ThemeKey>((initialCardTheme || "STANDARD") as ThemeKey);
     const [settingsSaved, setSettingsSaved] = useState(false);
-    const [activeSettingsTab, setActiveSettingsTab] = useState<"orientation" | "theme" | "visibility">("orientation");
+    const [activeSettingsTab, setActiveSettingsTab] = useState<"orientation" | "theme" | "visibility" | "info">("orientation");
     const [confirmDeleteName, setConfirmDeleteName] = useState("");
     const [deletingBani, setDeletingBani] = useState(false);
     const [deleteError, setDeleteError] = useState("");
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    // Info edit state (settings tab)
+    const [baniNameEdit, setBaniNameEdit] = useState(baniName);
+    const [baniDescEdit, setBaniDescEdit] = useState("");
+    const [rootMemberNameEdit, setRootMemberNameEdit] = useState("");
+    const [savingInfo, setSavingInfo] = useState(false);
+    const [infoSaved, setInfoSaved] = useState(false);
+    const [infoError, setInfoError] = useState("");
 
     // Auto-open settings from dashboard ?settings=true
     const searchParams = useSearchParams();
@@ -2087,6 +2095,49 @@ export default function BaniContent({
             setTimeout(() => setSettingsSaved(false), 2000);
         }
     }, [baniId]);
+
+    // Fetch initial bani info (name, desc, root member name) for Info tab
+    const [localBaniName, setLocalBaniName] = useState(baniName);
+    useEffect(() => {
+        csrfFetch(`/api/banis/${baniId}/info`)
+            .then(r => r.json())
+            .then(d => {
+                setBaniNameEdit(d.name || baniName);
+                setBaniDescEdit(d.description || "");
+                setRootMemberNameEdit(d.rootMemberName || "");
+                setLocalBaniName(d.name || baniName);
+            })
+            .catch(() => { /* silent fail - fields will stay as default */ });
+    }, [baniId]);
+
+    const saveInfo = async () => {
+        if (!baniNameEdit.trim()) return;
+        setSavingInfo(true);
+        setInfoError("");
+        try {
+            const res = await csrfFetch(`/api/banis/${baniId}/info`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: baniNameEdit.trim(),
+                    description: baniDescEdit,
+                    rootMemberName: rootMemberNameEdit,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setInfoError(data.error || "Gagal menyimpan");
+                return;
+            }
+            setLocalBaniName(data.name);
+            setInfoSaved(true);
+            setTimeout(() => setInfoSaved(false), 2000);
+        } catch {
+            setInfoError("Terjadi kesalahan. Silakan coba lagi.");
+        } finally {
+            setSavingInfo(false);
+        }
+    };
 
     const publicUrl = typeof window !== 'undefined' ? `${window.location.origin}/tree/${baniId}` : '';
 
@@ -2645,6 +2696,7 @@ export default function BaniContent({
                                 { key: "orientation" as const, label: "Orientasi", icon: <ArrowDownUp className="w-3.5 h-3.5" /> },
                                 { key: "theme" as const, label: "Tema", icon: <Palette className="w-3.5 h-3.5" /> },
                                 { key: "visibility" as const, label: "Visibilitas", icon: isPublic ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" /> },
+                                { key: "info" as const, label: "Info", icon: <Edit className="w-3.5 h-3.5" /> },
                             ]).map(tab => (
                                 <button
                                     key={tab.key}
@@ -2731,6 +2783,58 @@ export default function BaniContent({
                                             </button>
                                         );
                                     })}
+                                </div>
+                            )}
+
+                            {/* === Tab: Info Bani === */}
+                            {activeSettingsTab === "info" && (
+                                <div className="space-y-4">
+                                    {infoError && (
+                                        <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">{infoError}</div>
+                                    )}
+                                    <div>
+                                        <label className="block text-xs font-medium text-surface-600 mb-1">Nama Bani <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="text"
+                                            value={baniNameEdit}
+                                            onChange={e => setBaniNameEdit(e.target.value)}
+                                            className="w-full px-3 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-900 placeholder-surface-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                                            placeholder="Nama bani"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-surface-600 mb-1">Deskripsi</label>
+                                        <textarea
+                                            value={baniDescEdit}
+                                            onChange={e => setBaniDescEdit(e.target.value)}
+                                            rows={2}
+                                            className="w-full px-3 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-900 placeholder-surface-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 resize-none"
+                                            placeholder="Deskripsi singkat (opsional)"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-surface-600 mb-1">Nama Leluhur (Asal Nasab)</label>
+                                        <input
+                                            type="text"
+                                            value={rootMemberNameEdit}
+                                            onChange={e => setRootMemberNameEdit(e.target.value)}
+                                            className="w-full px-3 py-2.5 rounded-xl border border-surface-200 text-sm text-surface-900 placeholder-surface-400 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                                            placeholder="Nama leluhur di puncak pohon nasab"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={saveInfo}
+                                        disabled={savingInfo || !baniNameEdit.trim()}
+                                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold hover:from-primary-500 hover:to-primary-600 transition-all shadow-lg shadow-primary-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    >
+                                        {savingInfo ? (
+                                            <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</>
+                                        ) : infoSaved ? (
+                                            <><Check className="w-4 h-4" /> Tersimpan!</>
+                                        ) : (
+                                            <><Check className="w-4 h-4" /> Simpan Info</>
+                                        )}
+                                    </button>
                                 </div>
                             )}
 

@@ -174,6 +174,74 @@ class BaniController extends Controller
         }
     }
 
+    // GET /api/banis/{id}/info
+    public function info(Request $request, string $id): JsonResponse
+    {
+        try {
+            $bani = Bani::with('rootMember:id,full_name')->find($id);
+            if (!$bani) {
+                return response()->json(['error' => 'Not found'], 404);
+            }
+            return response()->json([
+                'name' => $bani->name,
+                'description' => $bani->description,
+                'rootMemberName' => $bani->rootMember?->full_name,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Get bani info error: ' . $e->getMessage());
+            return response()->json(['error' => 'Server error'], 500);
+        }
+    }
+
+    // PATCH /api/banis/{id}/info
+    public function updateInfo(Request $request, string $id): JsonResponse
+    {
+        try {
+            $user = $request->user();
+
+            $baniUser = BaniUser::where('bani_id', $id)
+                ->where('user_id', $user->id)
+                ->first();
+            $isSuperAdmin = $user->role === 'SUPER_ADMIN';
+
+            if (!$baniUser && !$isSuperAdmin) {
+                return response()->json(['error' => 'Forbidden'], 403);
+            }
+            if ($baniUser && $baniUser->role === 'VIEWER') {
+                return response()->json(['error' => 'Hanya admin yang bisa mengubah info bani'], 403);
+            }
+
+            $bani = Bani::with('rootMember')->find($id);
+            if (!$bani) {
+                return response()->json(['error' => 'Bani tidak ditemukan'], 404);
+            }
+
+            $data = $request->all();
+
+            if (isset($data['name']) && trim($data['name']) !== '') {
+                $bani->update(['name' => trim($data['name'])]);
+            }
+            if (array_key_exists('description', $data)) {
+                $bani->update(['description' => $data['description'] ? trim($data['description']) : null]);
+            }
+            if (isset($data['rootMemberName']) && trim($data['rootMemberName']) !== '' && $bani->rootMember) {
+                $bani->rootMember->update(['full_name' => trim($data['rootMemberName'])]);
+            }
+
+            $bani->refresh();
+            $bani->load('rootMember:id,full_name');
+
+            return response()->json([
+                'name' => $bani->name,
+                'description' => $bani->description,
+                'rootMemberName' => $bani->rootMember?->full_name,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Update bani info error: ' . $e->getMessage());
+            return response()->json(['error' => 'Server error'], 500);
+        }
+    }
+
     // GET /api/banis/{id}/settings
     public function settings(Request $request, string $id): JsonResponse
     {

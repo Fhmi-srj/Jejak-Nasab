@@ -21,7 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminAccess::class,
         ]);
 
-        //
+        // Exclude API routes from CSRF — still protected by auth (session) middleware
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
